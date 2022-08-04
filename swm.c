@@ -164,14 +164,14 @@ static void run() {
       case MotionNotify:
         debug_win();
         break;
-      case ConfigureRequest:
-        printf("Received configure request event\n");
-        fprintf(logfile, "Received configure request event\n");
-        configurerequest_handler(&event);
       case KeyPress:
         fprintf(logfile, "Received keypress event ");
         keypress_handler(&event);
         break;
+      case ConfigureRequest:
+        printf("Received configure request event\n");
+        fprintf(logfile, "Received configure request event\n");
+        configurerequest_handler(&event);
       case MapRequest:
         printf("Received maprequest event\n");
         fprintf(logfile, "Received maprequest event\n");
@@ -200,7 +200,7 @@ static void cleanup() {
   for (int i = 0; i < client_count; i++) {
     XUnmapWindow(display, clients[i]);
   }
-  fprintf(logfile, "END SESSION LOG");
+  fprintf(logfile, "END SESSION LOG\n");
   fclose(logfile);
 }
 
