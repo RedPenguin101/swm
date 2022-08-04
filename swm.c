@@ -82,9 +82,15 @@ static void keypress_handler(XEvent* event) {
 static void maprequest_handler(XEvent* event) {
   XMapRequestEvent* ev = &event->xmaprequest;
   Window client = ev->window;
+  fprintf(logfile, "\t new client %ld\n", client);
+
+  if (client == root) {
+    fprintf(logfile, "\t request is root, ignoring\n");
+
+    return;
+  }
   client_count += 1;
   clients[client_count] = client;
-  fprintf(logfile, "\t new client %ld\n", client);
   fprintf(logfile, "\t new client count %d\n", client_count);
 
   XWindowAttributes wa;
@@ -105,6 +111,11 @@ static void maprequest_handler(XEvent* event) {
 static void destroy_handler(XEvent* event) {
   XDestroyWindowEvent* dwe = &event->xdestroywindow;
   Window w = dwe->window;
+  if (w == root) {
+    fprintf(logfile, "\t request is root, ignoring\n");
+    return;
+  }
+
   client_count -= 1;
   fprintf(logfile, "\t client destroyed %ld\n", w);
   fprintf(logfile, "\t new client count %d\n", client_count);
@@ -152,12 +163,11 @@ static void run() {
         debug_win();
         break;
       case ConfigureRequest:
-        printf("Received configure reequest event\n");
+        printf("Received configure request event\n");
         fprintf(logfile, "Received configure request event\n");
         configurerequest_handler(&event);
       case KeyPress:
-        printf("Received keypress event\n");
-        fprintf(logfile, "Received maprequest event\n");
+        fprintf(logfile, "Received keypress event\n");
         keypress_handler(&event);
       case MapRequest:
         printf("Received maprequest event\n");

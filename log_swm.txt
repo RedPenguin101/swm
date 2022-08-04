@@ -1,15 +1,14 @@
 START SESSION LOG
 	 root window 1980
-Received maprequest event
+Received keypress event
 Received maprequest event
 	 new client 1980
-	 new client count 1
+	 request is root, ignoring
 Received DestroyNotify event
-	 client destroyed 1980
-	 new client count 0
+	 request is root, ignoring
 Received PropertyNotify event
 	 atom: 1980
-	 state: 45882054
+	 state: 46239263
 	 window: 1980
 Received FocusIn event
 	 type: 2
@@ -22,41 +21,151 @@ Received FocusOut event
 	 mode: 1980
 	 detail: 0
 Received event-type: 2
-Received FocusOut event
-	 type: 10
-	 window: 1980
-	 mode: 0
-	 detail: 5
-Received event-type: 10
-Received FocusOut event
-	 type: 10
-	 window: 1980
-	 mode: 0
-	 detail: 6
-Received event-type: 10
-Received FocusIn event
-	 type: 9
-	 window: 1980
-	 mode: 0
-	 detail: 3
-Received FocusOut event
-	 type: 9
-	 window: 1980
-	 mode: 0
-	 detail: 3
-Received event-type: 9
+Received keypress event
+Received maprequest event
+	 new client 1980
+	 request is root, ignoring
+Received DestroyNotify event
+	 request is root, ignoring
 Received PropertyNotify event
-	 atom: 119
-	 state: 0
+	 atom: 1980
+	 state: 46239365
 	 window: 1980
 Received FocusIn event
-	 type: 28
+	 type: 2
 	 window: 1980
-	 mode: 119
+	 mode: 1980
 	 detail: 0
 Received FocusOut event
-	 type: 28
+	 type: 2
 	 window: 1980
-	 mode: 119
+	 mode: 1980
 	 detail: 0
-Received event-type: 28
+Received event-type: 2
+Received keypress event
+Received maprequest event
+	 new client 1980
+	 request is root, ignoring
+Received DestroyNotify event
+	 request is root, ignoring
+Received PropertyNotify event
+	 atom: 1980
+	 state: 46239512
+	 window: 1980
+Received FocusIn event
+	 type: 2
+	 window: 1980
+	 mode: 1980
+	 detail: 0
+Received FocusOut event
+	 type: 2
+	 window: 1980
+	 mode: 1980
+	 detail: 0
+Received event-type: 2
+Received keypress event
+Received maprequest event
+	 new client 1980
+	 request is root, ignoring
+Received DestroyNotify event
+	 request is root, ignoring
+Received PropertyNotify event
+	 atom: 1980
+	 state: 46239654
+	 window: 1980
+Received FocusIn event
+	 type: 2
+	 window: 1980
+	 mode: 1980
+	 detail: 0
+Received FocusOut event
+	 type: 2
+	 window: 1980
+	 mode: 1980
+	 detail: 0
+Received event-type: 2
+Received keypress event
+Received maprequest event
+	 new client 1980
+	 request is root, ignoring
+Received DestroyNotify event
+	 request is root, ignoring
+Received PropertyNotify event
+	 atom: 1980
+	 state: 46239805
+	 window: 1980
+Received FocusIn event
+	 type: 2
+	 window: 1980
+	 mode: 1980
+	 detail: 0
+Received FocusOut event
+	 type: 2
+	 window: 1980
+	 mode: 1980
+	 detail: 0
+Received event-type: 2
+Received keypress event
+Received maprequest event
+	 new client 1980
+	 request is root, ignoring
+Received DestroyNotify event
+	 request is root, ignoring
+Received PropertyNotify event
+	 atom: 1980
+	 state: 46239893
+	 window: 1980
+Received FocusIn event
+	 type: 2
+	 window: 1980
+	 mode: 1980
+	 detail: 0
+Received FocusOut event
+	 type: 2
+	 window: 1980
+	 mode: 1980
+	 detail: 0
+Received event-type: 2
+Received keypress event
+Received maprequest event
+	 new client 1980
+	 request is root, ignoring
+Received DestroyNotify event
+	 request is root, ignoring
+Received PropertyNotify event
+	 atom: 1980
+	 state: 46243828
+	 window: 1980
+Received FocusIn event
+	 type: 2
+	 window: 1980
+	 mode: 1980
+	 detail: 0
+Received FocusOut event
+	 type: 2
+	 window: 1980
+	 mode: 1980
+	 detail: 0
+Received event-type: 2
+Received keypress event
+Received maprequest event
+	 new client 1980
+	 request is root, ignoring
+Received DestroyNotify event
+	 request is root, ignoring
+Received PropertyNotify event
+	 atom: 1980
+	 state: 46244038
+	 window: 1980
+Received FocusIn event
+	 type: 2
+	 window: 1980
+	 mode: 1980
+	 detail: 0
+Received FocusOut event
+	 type: 2
+	 window: 1980
+	 mode: 1980
+	 detail: 0
+Received event-type: 2
+END SESSION LOG
