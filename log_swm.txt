@@ -1,0 +1,37 @@
+START SESSION LOG
+	 root window 1980
+Received maprequest event
+Received maprequest event
+	 new client 1980
+	 new client count 1
+Received DestroyNotify event
+	 client destroyed 1980
+	 new client count 0
+Received PropertyNotify event
+	 atom: 1980
+	 state: 45694486
+	 window: 1980
+Received FocusIn event
+	 type: 2
+	 window: 1980
+	 window: 1980
+	 window: 0
+Received event-type: 2
+Received event-type: 10
+Received event-type: 10
+Received FocusIn event
+	 type: 9
+	 window: 1980
+	 window: 0
+	 window: 3
+Received event-type: 9
+Received PropertyNotify event
+	 atom: 119
+	 state: 0
+	 window: 1980
+Received FocusIn event
+	 type: 28
+	 window: 1980
+	 window: 119
+	 window: 0
+Received event-type: 28

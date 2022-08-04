@@ -136,6 +136,14 @@ static void propertynotify_handler(XEvent* event) {
   fprintf(logfile, "\t window: %ld\n", ev->window);
 }
 
+static void focusin_handler(XEvent* event) {
+  XFocusChangeEvent* ev = &event->xfocus;
+  fprintf(logfile, "\t type: %d\n", ev->type);
+  fprintf(logfile, "\t window: %ld\n", ev->window);
+  fprintf(logfile, "\t mode: %d\n", ev->mode);
+  fprintf(logfile, "\t detail: %d\n", ev->detail);
+}
+
 static void run() {
   XEvent event;
   while (running && XNextEvent(display, &event) == 0) {
@@ -162,6 +170,9 @@ static void run() {
       case PropertyNotify:
         fprintf(logfile, "Received PropertyNotify event\n");
         propertynotify_handler(&event);
+      case FocusIn:
+        fprintf(logfile, "Received FocusIn event\n");
+        focusin_handler(&event);
       default:
         printf("event-type: %d\n", event.type);
         fprintf(logfile, "Received event-type: %d\n", event.type);
