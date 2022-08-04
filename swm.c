@@ -173,6 +173,9 @@ static void run() {
       case FocusIn:
         fprintf(logfile, "Received FocusIn event\n");
         focusin_handler(&event);
+      case FocusOut:
+        fprintf(logfile, "Received FocusOut event\n");
+        focusin_handler(&event);
       default:
         printf("event-type: %d\n", event.type);
         fprintf(logfile, "Received event-type: %d\n", event.type);
