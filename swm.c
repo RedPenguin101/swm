@@ -83,10 +83,15 @@ static void maprequest_handler(XEvent* event) {
   XMapRequestEvent* ev = &event->xmaprequest;
   Window client = ev->window;
   fprintf(logfile, "\t new client %ld\n", client);
+  fprintf(logfile, "\t parent %ld\n", ev->parent);
 
   if (client == root) {
     fprintf(logfile, "\t request is root, ignoring\n");
-
+    XSetWindowAttributes wa;
+    XGetWindowAttributes(display, client, &wa);
+    wa.background_pixel = col_bg.pixel;
+    XMoveResizeWindow(display, root, 0, 0, screen_w, screen_h);
+    XSync(display, false);
     return;
   }
   client_count += 1;
@@ -111,6 +116,8 @@ static void maprequest_handler(XEvent* event) {
 static void destroy_handler(XEvent* event) {
   XDestroyWindowEvent* dwe = &event->xdestroywindow;
   Window w = dwe->window;
+  fprintf(logfile, "\t client requesting %ld\n", w);
+  fprintf(logfile, "\t event %ld\n", dwe->event);
   if (w == root) {
     fprintf(logfile, "\t request is root, ignoring\n");
     return;
@@ -120,9 +127,9 @@ static void destroy_handler(XEvent* event) {
   fprintf(logfile, "\t client destroyed %ld\n", w);
   fprintf(logfile, "\t new client count %d\n", client_count);
 
-  if (client_count == 0) {
-    XSetInputFocus(display, root, RevertToPointerRoot, CurrentTime);
-  }
+  // if (client_count == 0) {
+  //   XSetInputFocus(display, root, RevertToPointerRoot, CurrentTime);
+  // }
 }
 
 static void configurerequest_handler(XEvent* event) {

@@ -3,12 +3,15 @@ START SESSION LOG
 Received keypress event
 Received maprequest event
 	 new client 1980
+	 parent 1980
 	 request is root, ignoring
 Received DestroyNotify event
+	 client requesting 1980
+	 event 1980
 	 request is root, ignoring
 Received PropertyNotify event
 	 atom: 1980
-	 state: 46239263
+	 state: 47250312
 	 window: 1980
 Received FocusIn event
 	 type: 2
@@ -24,12 +27,15 @@ Received event-type: 2
 Received keypress event
 Received maprequest event
 	 new client 1980
+	 parent 1980
 	 request is root, ignoring
 Received DestroyNotify event
+	 client requesting 1980
+	 event 1980
 	 request is root, ignoring
 Received PropertyNotify event
 	 atom: 1980
-	 state: 46239365
+	 state: 47250419
 	 window: 1980
 Received FocusIn event
 	 type: 2
@@ -45,12 +51,15 @@ Received event-type: 2
 Received keypress event
 Received maprequest event
 	 new client 1980
+	 parent 1980
 	 request is root, ignoring
 Received DestroyNotify event
+	 client requesting 1980
+	 event 1980
 	 request is root, ignoring
 Received PropertyNotify event
 	 atom: 1980
-	 state: 46239512
+	 state: 47250545
 	 window: 1980
 Received FocusIn event
 	 type: 2
@@ -66,12 +75,15 @@ Received event-type: 2
 Received keypress event
 Received maprequest event
 	 new client 1980
+	 parent 1980
 	 request is root, ignoring
 Received DestroyNotify event
+	 client requesting 1980
+	 event 1980
 	 request is root, ignoring
 Received PropertyNotify event
 	 atom: 1980
-	 state: 46239654
+	 state: 47250683
 	 window: 1980
 Received FocusIn event
 	 type: 2
@@ -87,12 +99,15 @@ Received event-type: 2
 Received keypress event
 Received maprequest event
 	 new client 1980
+	 parent 1980
 	 request is root, ignoring
 Received DestroyNotify event
+	 client requesting 1980
+	 event 1980
 	 request is root, ignoring
 Received PropertyNotify event
 	 atom: 1980
-	 state: 46239805
+	 state: 47250839
 	 window: 1980
 Received FocusIn event
 	 type: 2
@@ -108,12 +123,15 @@ Received event-type: 2
 Received keypress event
 Received maprequest event
 	 new client 1980
+	 parent 1980
 	 request is root, ignoring
 Received DestroyNotify event
+	 client requesting 1980
+	 event 1980
 	 request is root, ignoring
 Received PropertyNotify event
 	 atom: 1980
-	 state: 46239893
+	 state: 47250959
 	 window: 1980
 Received FocusIn event
 	 type: 2
@@ -129,12 +147,15 @@ Received event-type: 2
 Received keypress event
 Received maprequest event
 	 new client 1980
+	 parent 1980
 	 request is root, ignoring
 Received DestroyNotify event
+	 client requesting 1980
+	 event 1980
 	 request is root, ignoring
 Received PropertyNotify event
 	 atom: 1980
-	 state: 46243828
+	 state: 47251324
 	 window: 1980
 Received FocusIn event
 	 type: 2
@@ -150,12 +171,15 @@ Received event-type: 2
 Received keypress event
 Received maprequest event
 	 new client 1980
+	 parent 1980
 	 request is root, ignoring
 Received DestroyNotify event
+	 client requesting 1980
+	 event 1980
 	 request is root, ignoring
 Received PropertyNotify event
 	 atom: 1980
-	 state: 46244038
+	 state: 47251526
 	 window: 1980
 Received FocusIn event
 	 type: 2
