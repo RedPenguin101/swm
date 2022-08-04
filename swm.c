@@ -67,8 +67,8 @@ static void setup() {
 static void keypress_handler(XEvent* event) {
   XKeyEvent* ev = &event->xkey;
   KeySym keysym = XKeycodeToKeysym(display, ev->keycode, 0);
-  printf("KeySym: %ld\n", keysym);
-  printf("State: %d\n", ev->state);
+  fprintf(logfile, "KeySym: %ld ", keysym);
+  fprintf(logfile, "State: %d\n", ev->state);
   if (keysym == XK_q && (ev->state == ControlMask || ev->state == Mod4Mask ||
                          ev->state == Mod5Mask))
     running = false;
@@ -87,11 +87,6 @@ static void maprequest_handler(XEvent* event) {
 
   if (client == root) {
     fprintf(logfile, "\t request is root, ignoring\n");
-    XSetWindowAttributes wa;
-    XGetWindowAttributes(display, client, &wa);
-    wa.background_pixel = col_bg.pixel;
-    XMoveResizeWindow(display, root, 0, 0, screen_w, screen_h);
-    XSync(display, false);
     return;
   }
   client_count += 1;
@@ -174,8 +169,9 @@ static void run() {
         fprintf(logfile, "Received configure request event\n");
         configurerequest_handler(&event);
       case KeyPress:
-        fprintf(logfile, "Received keypress event\n");
+        fprintf(logfile, "Received keypress event ");
         keypress_handler(&event);
+        break;
       case MapRequest:
         printf("Received maprequest event\n");
         fprintf(logfile, "Received maprequest event\n");
