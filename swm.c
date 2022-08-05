@@ -88,10 +88,11 @@ static void setup() {
                   KeyPressMask | ButtonPressMask | PointerMotionMask;
 
   XSelectInput(display, root, wa.event_mask);
-  XSync(display, false);
   XMoveResizeWindow(display, root, 0, 0, screen_w, screen_h);
   XChangeWindowAttributes(display, root, CWBackPixel | CWEventMask | CWCursor,
                           &wa);
+  XClearWindow(display, root);
+  XSync(display, false);
 }
 
 void spawn_term() {
