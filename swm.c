@@ -101,16 +101,13 @@ static void mapnotify_handler(XEvent* event) {
 static void maprequest_handler(XEvent* event) {
   XMapRequestEvent* ev = &event->xmaprequest;
   Window client = ev->window;
-  fprintf(logfile, "\t new client %ld\n", client);
+  fprintf(logfile, "\t maprequest for client %ld\n", client);
   fprintf(logfile, "\t parent %ld\n", ev->parent);
 
   if (client == root) {
     fprintf(logfile, "\t request is root, ignoring\n");
     return;
   }
-  client_count += 1;
-  clients[client_count] = client;
-  fprintf(logfile, "\t new client count %d\n", client_count);
 
   XWindowAttributes wa;
   XGetWindowAttributes(display, client, &wa);
