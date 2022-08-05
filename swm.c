@@ -86,10 +86,12 @@ static void setup() {
 
   wa.event_mask = SubstructureRedirectMask | SubstructureNotifyMask |
                   KeyPressMask | ButtonPressMask | PointerMotionMask;
+
   XSelectInput(display, root, wa.event_mask);
   XSync(display, false);
   XMoveResizeWindow(display, root, 0, 0, screen_w, screen_h);
-  XChangeWindowAttributes(display, root, CWEventMask | CWCursor, &wa);
+  XChangeWindowAttributes(display, root, CWBackPixel | CWEventMask | CWCursor,
+                          &wa);
 }
 
 void spawn_term() {
@@ -110,6 +112,10 @@ void killclient() {
   XGrabServer(display);
   XSetCloseDownMode(display, DestroyAll);
   XKillClient(display, w);
+
+  if (window_count == 0)
+    XSetInputFocus(display, root, RevertToPointerRoot, CurrentTime);
+
   XSync(display, False);
   XUngrabServer(display);
 }
@@ -158,6 +164,9 @@ static void unmapnotify_handler(XEvent* event) {
     window_count -= 1;
     fprintf(logfile, "\t Window count %d\n", window_count);
   }
+
+  if (window_count == 0)
+    XSetInputFocus(display, root, RevertToPointerRoot, CurrentTime);
 }
 
 static void maprequest_handler(XEvent* event) {
