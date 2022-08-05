@@ -7,6 +7,13 @@
 #include <stdio.h>
 #include <unistd.h>
 
+Atom WMProtocols;
+Atom WMDelete;
+Atom WMState;
+Atom WMTakeFocus;
+
+Cursor cursor;
+
 static int screen;
 static int screen_w, screen_h;
 static int running = true;
@@ -27,7 +34,16 @@ static void setup() {
   root = RootWindow(display, screen);
   fprintf(logfile, "\t root window %ld\n", root);
 
+  WMProtocols = XInternAtom(display, "WM_PROTOCOLS", False);
+  WMDelete = XInternAtom(display, "WM_DELETE_WINDOW", False);
+  WMState = XInternAtom(display, "WM_STATE", False);
+  WMTakeFocus = XInternAtom(display, "WM_TAKE_FOCUS", False);
+
   XSetWindowAttributes wa;
+
+  cursor = XCreateFontCursor(display, XC_left_ptr);
+  wa.cursor = cursor;
+
   wa.event_mask = SubstructureRedirectMask | SubstructureNotifyMask |
                   KeyPressMask | ButtonPressMask | PointerMotionMask;
   XSelectInput(display, root, wa.event_mask);
