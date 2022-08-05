@@ -1,6 +1,9 @@
-How to get a solid background for root?
-Maintain shortcuts from client
-Handle a second client launched from first shell client
-Make default size better
+Mod+L for Launcher
+Shifting windows
+Time / status in launchers
 
 DONE Handle a second client launched from command
+DONE How to get a solid background for root?
+DONE Maintain shortcuts from client
+DONE Handle a second client launched from first shell client
+DONE Make default size better

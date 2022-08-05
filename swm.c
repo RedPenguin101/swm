@@ -8,11 +8,6 @@
 #include <stdio.h>
 #include <unistd.h>
 
-Atom WMProtocols;
-Atom WMDelete;
-Atom WMState;
-Atom WMTakeFocus;
-
 Cursor cursor;
 
 static int screen;
@@ -76,11 +71,6 @@ static void setup() {
   screen_h = DisplayHeight(display, screen);
   root = RootWindow(display, screen);
   fprintf(logfile, "Root window %ld\n", root);
-
-  WMProtocols = XInternAtom(display, "WM_PROTOCOLS", False);
-  WMDelete = XInternAtom(display, "WM_DELETE_WINDOW", False);
-  WMState = XInternAtom(display, "WM_STATE", False);
-  WMTakeFocus = XInternAtom(display, "WM_TAKE_FOCUS", False);
 
   grabkeys();
 
