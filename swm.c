@@ -74,7 +74,7 @@ static void setup() {
   XSetWindowAttributes wa;
 
   XftColorAllocName(display, DefaultVisual(display, screen),
-                    DefaultColormap(display, screen), "#00FF00", &col_bg);
+                    DefaultColormap(display, screen), "#dedcfd", &col_bg);
   XftColorAllocName(display, DefaultVisual(display, screen),
                     DefaultColormap(display, screen), "#FF0000", &col_fg);
   XftColorAllocName(display, DefaultVisual(display, screen),
