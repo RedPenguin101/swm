@@ -160,6 +160,7 @@ static void focusin_handler(XEvent* event) {
 static void run() {
   XEvent event;
   while (running && XNextEvent(display, &event) == 0) {
+    fflush(logfile);
     switch (event.type) {
       case MotionNotify:
         debug_win();
