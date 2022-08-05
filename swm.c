@@ -29,6 +29,7 @@ int window_count = 0;
 // style
 
 FILE* logfile;
+bool verbose = false;
 
 int xerror(Display* dpy, XErrorEvent* ee) {
   if (ee->error_code == BadWindow ||
@@ -63,7 +64,7 @@ static void setup() {
   screen_w = DisplayWidth(display, screen);
   screen_h = DisplayHeight(display, screen);
   root = RootWindow(display, screen);
-  fprintf(logfile, "\t root window %ld\n", root);
+  fprintf(logfile, "Root window %ld\n", root);
 
   WMProtocols = XInternAtom(display, "WM_PROTOCOLS", False);
   WMDelete = XInternAtom(display, "WM_DELETE_WINDOW", False);
@@ -98,8 +99,9 @@ void spawn_term() {
 static void keypress_handler(XEvent* event) {
   XKeyEvent* ev = &event->xkey;
   KeySym keysym = XKeycodeToKeysym(display, ev->keycode, 0);
-  fprintf(logfile, "Keypress \t\t KeySym: %ld ", keysym);
-  fprintf(logfile, "State: %d\n", ev->state);
+  if (verbose)
+    fprintf(logfile, "Keypress \t\t KeySym: %ld state = 0x%x\n", keysym,
+            ev->state);
   if (keysym == XK_q && (ev->state == ControlMask || ev->state == Mod4Mask ||
                          ev->state == Mod5Mask))
     running = false;
@@ -127,7 +129,7 @@ static void unmapnotify_handler(XEvent* event) {
   XUnmapEvent* ev = &event->xunmap;
   Window w = ev->window;
 
-  fprintf(logfile, "UnmapN \t\t\t %ld \t\t event from %ld\n", ev->window,
+  fprintf(logfile, "UnmapN \t\t\t %ld \t\t event from %ld ", ev->window,
           ev->event);
 
   int idx = find_window_index(w);
@@ -169,13 +171,15 @@ static void maprequest_handler(XEvent* event) {
 static void createnotify_handler(XEvent* event) {
   XCreateWindowEvent* cwe = &event->xcreatewindow;
   Window w = cwe->window;
-  fprintf(logfile, "CreateR \t\t %ld\t\t parent %ld\n", w, cwe->parent);
+  if (verbose)
+    fprintf(logfile, "CreateR \t\t %ld\t\t parent %ld\n", w, cwe->parent);
 }
 
 static void destroy_handler(XEvent* event) {
   XDestroyWindowEvent* dwe = &event->xdestroywindow;
   Window w = dwe->window;
-  fprintf(logfile, "DestroyR \t\t %ld\t\t event %ld\n", w, dwe->event);
+  if (verbose)
+    fprintf(logfile, "DestroyN \t\t %ld\t\t event %ld\n", w, dwe->event);
 }
 
 static void configurerequest_handler(XEvent* event) {
@@ -189,10 +193,6 @@ static void configurerequest_handler(XEvent* event) {
   XWindowAttributes rwa;
   XGetWindowAttributes(display, root, &rwa);
 
-  fprintf(logfile, "\t\t ScreenH: %d ScreenW: %d RootH: %d RootW: %d \n",
-          DisplayWidth(display, screen), DisplayHeight(display, screen),
-          rwa.width, rwa.height);
-
   XWindowChanges wc;
   wc.x = req.x;
   wc.y = req.y;
@@ -203,17 +203,18 @@ static void configurerequest_handler(XEvent* event) {
 
 static void configurenotify_handler(XEvent* event) {
   XConfigureEvent* ev = &event->xconfigure;
-
-  fprintf(logfile,
-          "ConfN \t\t\t %ld \t\t xywhb: %d,%d,%d,%d,%d \t\t above: %ld\n",
-          ev->window, ev->x, ev->y, ev->width, ev->height, ev->border_width,
-          ev->above);
+  if (verbose)
+    fprintf(logfile,
+            "ConfN \t\t\t %ld \t\t xywhb: %d,%d,%d,%d,%d \t\t above: %ld\n",
+            ev->window, ev->x, ev->y, ev->width, ev->height, ev->border_width,
+            ev->above);
 }
 
 static void propertynotify_handler(XEvent* event) {
   XPropertyEvent* ev = &event->xproperty;
-  fprintf(logfile, "PropN \t\t\t %ld \t\t %ld \t %d\n", ev->window, ev->atom,
-          ev->state);
+  if (verbose)
+    fprintf(logfile, "PropN \t\t\t %ld \t\t %ld \t %d\n", ev->window, ev->atom,
+            ev->state);
 }
 
 static void focus_handler(XEvent* event) {
@@ -287,6 +288,7 @@ static void cleanup() {
   for (int i = 0; i < window_count; i++)
     XUnmapWindow(display, windows[i]);
   fprintf(logfile, "END SESSION LOG\n");
+  fflush(logfile);
   fclose(logfile);
 }
 
