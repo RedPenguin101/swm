@@ -64,6 +64,18 @@ static void setup() {
   XChangeWindowAttributes(display, root, CWEventMask | CWCursor, &wa);
 }
 
+void spawn_term() {
+  if (fork() == 0) {
+    fprintf(logfile, "spawning terminal\n");
+    if (display)
+      close(ConnectionNumber(display));
+    static const char* termcmd[] = {"kitty", NULL};
+    setsid();
+    execvp(((char**)termcmd)[0], (char**)termcmd);
+    exit(EXIT_SUCCESS);
+  }
+}
+
 static void keypress_handler(XEvent* event) {
   XKeyEvent* ev = &event->xkey;
   KeySym keysym = XKeycodeToKeysym(display, ev->keycode, 0);
@@ -74,8 +86,7 @@ static void keypress_handler(XEvent* event) {
     running = false;
   else if (keysym == XK_t && (ev->state == ControlMask ||
                               ev->state == Mod4Mask || ev->state == Mod5Mask)) {
-    static const char* termcmd[] = {"kitty", NULL};
-    execvp(((char**)termcmd)[0], (char**)termcmd);
+    spawn_term();
   }
 }
 
