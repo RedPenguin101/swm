@@ -91,12 +91,11 @@ static void keypress_handler(XEvent* event) {
 }
 
 static void mapnotify_handler(XEvent* event) {
-  XMappingEvent* ev = &event->xmapping;
-
+  XMapEvent* ev = &event->xmap;
   fprintf(logfile, "\t window: %ld\n", ev->window);
-  fprintf(logfile, "\t request type: %d\n", ev->request);
+  fprintf(logfile, "\t event: %ld\n", ev->event);
   fprintf(logfile, "\t send event?: %d\n", ev->send_event);
-  fprintf(logfile, "\t keycode: %d\n", ev->first_keycode);
+  fprintf(logfile, "\t overide redirect?: %d\n", ev->override_redirect);
 }
 
 static void maprequest_handler(XEvent* event) {
