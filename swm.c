@@ -39,10 +39,15 @@ int xerror(Display* dpy, XErrorEvent* ee) {
       (ee->request_code == X_ConfigureWindow && ee->error_code == BadMatch) ||
       (ee->request_code == X_GrabButton && ee->error_code == BadAccess) ||
       (ee->request_code == X_GrabKey && ee->error_code == BadAccess) ||
-      (ee->request_code == X_CopyArea && ee->error_code == BadDrawable))
+      (ee->request_code == X_CopyArea && ee->error_code == BadDrawable)) {
+    fprintf(logfile,
+            "non-fatal error: request code=%d, error code=%d, resource=%ld\n",
+            ee->request_code, ee->error_code, ee->resourceid);
     return 0;
-  fprintf(logfile, "fatal error: request code=%d, error code=%d\n",
-          ee->request_code, ee->error_code);
+  }
+  fprintf(logfile,
+          "fatal error: request code=%d, error code=%d, resource=%ld\n",
+          ee->request_code, ee->error_code, ee->resourceid);
   fflush(logfile);
   return xerrorxlib(dpy, ee); /* may call exit */
 }
