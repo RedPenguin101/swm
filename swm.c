@@ -184,9 +184,8 @@ static void configurenotify_handler(XEvent* event) {
 
 static void propertynotify_handler(XEvent* event) {
   XPropertyEvent* ev = &event->xproperty;
-  fprintf(logfile, "\t atom: %ld\n", ev->atom);
-  fprintf(logfile, "\t state: %d\n", ev->state);
-  fprintf(logfile, "\t window: %ld\n", ev->window);
+  fprintf(logfile, "PropN \t\t\t %ld \t\t %ld \t %d\n", ev->window, ev->atom,
+          ev->state);
 }
 
 static void focus_handler(XEvent* event) {
@@ -234,7 +233,6 @@ static void run() {
         destroy_handler(&event);
         break;
       case PropertyNotify:
-        fprintf(logfile, "Received PropertyNotify event\n");
         propertynotify_handler(&event);
         break;
       case FocusIn:
@@ -247,7 +245,7 @@ static void run() {
         enter_handler(&event);
         break;
       default:
-        fprintf(logfile, "Received event-type: %d\n", event.type);
+        fprintf(logfile, "Unhandled event-type: %d\n", event.type);
     }
     XSync(display, false);
     fflush(logfile);
