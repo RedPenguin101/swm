@@ -96,19 +96,28 @@ void spawn_term() {
   }
 }
 
+void killclient() {
+  window_count -= 1;
+  Window w = windows[window_count];
+  XGrabServer(display);
+  XSetCloseDownMode(display, DestroyAll);
+  XKillClient(display, w);
+  XSync(display, False);
+  XUngrabServer(display);
+}
+
 static void keypress_handler(XEvent* event) {
   XKeyEvent* ev = &event->xkey;
   KeySym keysym = XKeycodeToKeysym(display, ev->keycode, 0);
   if (verbose)
     fprintf(logfile, "Keypress \t\t KeySym: %ld state = 0x%x\n", keysym,
             ev->state);
-  if (keysym == XK_q && (ev->state == ControlMask || ev->state == Mod4Mask ||
-                         ev->state == Mod5Mask))
+  if (keysym == XK_q && (ev->state == Mod4Mask || ev->state == Mod5Mask))
     running = false;
-  else if (keysym == XK_t && (ev->state == ControlMask ||
-                              ev->state == Mod4Mask || ev->state == Mod5Mask)) {
+  else if (keysym == XK_t && (ev->state == Mod4Mask || ev->state == Mod5Mask))
     spawn_term();
-  }
+  else if (keysym == XK_c && (ev->state == Mod4Mask || ev->state == Mod5Mask))
+    killclient();
 }
 
 static void mapnotify_handler(XEvent* event) {
@@ -160,9 +169,11 @@ static void maprequest_handler(XEvent* event) {
                EnterWindowMask | FocusChangeMask | PropertyChangeMask |
                    StructureNotifyMask);
 
-  XGrabKey(display, XKeysymToKeycode(display, XK_q),
-           ControlMask | Mod4Mask | Mod5Mask, root, True, GrabModeAsync,
-           GrabModeAsync);
+  XUngrabKey(display, AnyKey, AnyModifier, root);
+  XGrabKey(display, XKeysymToKeycode(display, XK_q), Mod4Mask | Mod5Mask, root,
+           True, GrabModeAsync, GrabModeAsync);
+  XGrabKey(display, XKeysymToKeycode(display, XK_c), Mod4Mask | Mod5Mask, root,
+           True, GrabModeAsync, GrabModeAsync);
   XMoveResizeWindow(display, window, 0, 0, screen_w, screen_h);
   XMapWindow(display, window);
   XSync(display, false);
