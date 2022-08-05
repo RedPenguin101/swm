@@ -155,6 +155,13 @@ static void destroy_handler(XEvent* event) {
 
 static void configurerequest_handler(XEvent* event) {
   XConfigureRequestEvent req = event->xconfigurerequest;
+  fprintf(logfile, "\t parent: %ld\n", req.parent);
+  fprintf(logfile, "\t window: %ld\n", req.window);
+  fprintf(logfile, "\t xywhb: %d,%d,%d,%d,%d\n", req.x, req.y, req.width,
+          req.height, req.border_width);
+  fprintf(logfile, "\t above: %ld\n", req.above);
+  fprintf(logfile, "\t val mask: %lx\n", req.value_mask);
+
   XWindowChanges wc;
   wc.x = req.x;
   wc.y = req.y;
