@@ -23,6 +23,7 @@ static Window root;
 
 static int (*xerrorxlib)(Display*, XErrorEvent*);
 
+Window windows[20] = {0};
 int window_count = 0;
 
 // style
@@ -114,27 +115,54 @@ static void mapnotify_handler(XEvent* event) {
           ev->event);
 }
 
+int find_window_index(Window w) {
+  for (int i = 0; i < window_count; i++) {
+    if (windows[i] == w)
+      return i;
+  }
+  return -1;
+}
+
+static void unmapnotify_handler(XEvent* event) {
+  XUnmapEvent* ev = &event->xunmap;
+  Window w = ev->window;
+
+  fprintf(logfile, "UnmapN \t\t\t %ld \t\t event from %ld\n", ev->window,
+          ev->event);
+
+  int idx = find_window_index(w);
+  if (idx == -1)
+    fprintf(logfile, "\t Window not found\n");
+  else if (idx != window_count - 1)
+    fprintf(logfile, "\t Window wasn't top of stack\n");
+  else {
+    window_count -= 1;
+    fprintf(logfile, "\t Window count %d\n", window_count);
+  }
+}
+
 static void maprequest_handler(XEvent* event) {
   XMapRequestEvent* ev = &event->xmaprequest;
-  Window client = ev->window;
+  Window window = ev->window;
 
+  windows[window_count] = window;
   window_count += 1;
 
   fprintf(logfile, "MapR \t\t\t\t %ld \t\t parent %ld \t window count %d\n",
           ev->window, ev->parent, window_count);
 
   XWindowAttributes wa;
-  XGetWindowAttributes(display, client, &wa);
+  XGetWindowAttributes(display, window, &wa);
 
-  XSelectInput(display, client,
+  XSelectInput(display, window,
                EnterWindowMask | FocusChangeMask | PropertyChangeMask |
                    StructureNotifyMask);
 
   XGrabKey(display, XKeysymToKeycode(display, XK_q),
            ControlMask | Mod4Mask | Mod5Mask, root, True, GrabModeAsync,
            GrabModeAsync);
-  XMoveResizeWindow(display, client, 0, 0, screen_w, screen_h);
-  XMapWindow(display, client);
+  XMoveResizeWindow(display, window, 0, 0, screen_w, screen_h);
+  XMapWindow(display, window);
   XSync(display, false);
 }
 
@@ -226,6 +254,9 @@ static void run() {
       case MapNotify:
         mapnotify_handler(&event);
         break;
+      case UnmapNotify:
+        unmapnotify_handler(&event);
+        break;
       case CreateNotify:
         createnotify_handler(&event);
         break;
@@ -253,6 +284,8 @@ static void run() {
 }
 
 static void cleanup() {
+  for (int i = 0; i < window_count; i++)
+    XUnmapWindow(display, windows[i]);
   fprintf(logfile, "END SESSION LOG\n");
   fclose(logfile);
 }
