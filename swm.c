@@ -20,6 +20,8 @@ static int running = true;
 static Display* display;
 static Window root;
 
+int window_count = 0;
+
 // style
 
 FILE* logfile;
@@ -90,6 +92,7 @@ static void maprequest_handler(XEvent* event) {
 
   fprintf(logfile, "MapR \t\t\t\t %ld \t\t parent %ld \n", ev->window,
           ev->parent);
+  window_count += 1;
 
   XWindowAttributes wa;
   XGetWindowAttributes(display, client, &wa);

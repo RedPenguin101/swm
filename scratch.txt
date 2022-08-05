@@ -1,0 +1,25 @@
+create
+              1 BackPxMap
+             10 BackPx
+            100 BorderPxMap
+           1000 BorderPx
+          10000 BigGrav
+         100000 WinGrav
+        1000000 BackStore
+       10000000 BackPlane
+      100000000 BackPx
+     1000000000 Overide
+    10000000000 saveunder
+   100000000000 evmast
+  1000000000000 dont prop
+ 10000000000000 colmap
+100000000000000 cursor
+
+conf
+0x01          1 CWX
+0x02         10 CWY
+0x04        100 CWWidth
+0x08       1000 CWHeight
+0x10      10000 CWBorderWidth
+0x20     100000 CWSibling
+0x40    1000000 CWStackMode
