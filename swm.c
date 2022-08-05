@@ -90,6 +90,15 @@ static void keypress_handler(XEvent* event) {
   }
 }
 
+static void mapnotify_handler(XEvent* event) {
+  XMappingEvent* ev = &event->xmapping;
+
+  fprintf(logfile, "\t window: %ld\n", ev->window);
+  fprintf(logfile, "\t request type: %d\n", ev->request);
+  fprintf(logfile, "\t send event?: %d\n", ev->send_event);
+  fprintf(logfile, "\t keycode: %d\n", ev->first_keycode);
+}
+
 static void maprequest_handler(XEvent* event) {
   XMapRequestEvent* ev = &event->xmaprequest;
   Window client = ev->window;
@@ -119,6 +128,16 @@ static void maprequest_handler(XEvent* event) {
   XSync(display, false);
 }
 
+static void createnotify_handler(XEvent* event) {
+  XCreateWindowEvent* cwe = &event->xcreatewindow;
+  Window w = cwe->window;
+  client_count += 1;
+  fprintf(logfile, "\t client requesting %ld\n", w);
+  fprintf(logfile, "\t parent %ld\n", cwe->parent);
+  fprintf(logfile, "\t new client count %d\n", client_count);
+  clients[client_count] = w;
+}
+
 static void destroy_handler(XEvent* event) {
   XDestroyWindowEvent* dwe = &event->xdestroywindow;
   Window w = dwe->window;
@@ -146,6 +165,16 @@ static void configurerequest_handler(XEvent* event) {
   wc.width = req.width;
   wc.height = req.height;
   XConfigureWindow(display, req.window, req.value_mask, &wc);
+}
+
+static void configurenotify_handler(XEvent* event) {
+  XConfigureEvent* ev = &event->xconfigure;
+  fprintf(logfile, "\t event: %ld\n", ev->event);
+  fprintf(logfile, "\t window: %ld\n", ev->window);
+  fprintf(logfile, "\t xywhb: %d,%d,%d,%d,%d\n", ev->x, ev->y, ev->width,
+          ev->height, ev->border_width);
+  fprintf(logfile, "\t above: %ld\n", ev->above);
+  fprintf(logfile, "\t overide: %d\n", ev->override_redirect);
 }
 
 static void debug_win() {
@@ -185,10 +214,25 @@ static void run() {
         fprintf(logfile, "Received configure request event\n");
         configurerequest_handler(&event);
         break;
+      case ConfigureNotify:
+        printf("Received configure notify event\n");
+        fprintf(logfile, "Received configure notify event\n");
+        configurenotify_handler(&event);
+        break;
       case MapRequest:
         printf("Received maprequest event\n");
         fprintf(logfile, "Received maprequest event\n");
         maprequest_handler(&event);
+        break;
+      case MapNotify:
+        printf("Received map notify event\n");
+        fprintf(logfile, "Received map notify event\n");
+        mapnotify_handler(&event);
+        break;
+      case CreateNotify:
+        fprintf(logfile, "Received CreateNotify event\n");
+        printf("Received CreateNotify event\n");
+        createnotify_handler(&event);
         break;
       case DestroyNotify:
         fprintf(logfile, "Received DestroyNotify event\n");
