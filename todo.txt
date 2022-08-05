@@ -1,7 +1,8 @@
-Mod+L for Launcher
 Shifting windows
 Time / status in launchers
+Dynamic dispatch for handlers
 
+DONE Mod+L for Launcher
 DONE Handle a second client launched from command
 DONE How to get a solid background for root?
 DONE Maintain shortcuts from client

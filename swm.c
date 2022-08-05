@@ -58,6 +58,8 @@ static void grabkeys() {
            GrabModeAsync, GrabModeAsync);
   XGrabKey(display, XKeysymToKeycode(display, XK_t), Mod4Mask, root, True,
            GrabModeAsync, GrabModeAsync);
+  XGrabKey(display, XKeysymToKeycode(display, XK_l), Mod4Mask, root, True,
+           GrabModeAsync, GrabModeAsync);
 }
 
 static void setup() {
@@ -110,6 +112,21 @@ void spawn_term() {
   }
 }
 
+void spawn_dmenu() {
+  if (fork() == 0) {
+    fprintf(logfile, "spawning dmenu\n");
+    if (display)
+      close(ConnectionNumber(display));
+    static const char* demenucmd[] = {
+        "dmenu_run", "-m",      "0",       "-fn",     "monospace:size=10",
+        "-nb",       "#bbbbbb", "-nf",     "#222222", "-sb",
+        "#005577",   "-sf",     "#eeeeee", NULL};
+    setsid();
+    execvp(((char**)demenucmd)[0], (char**)demenucmd);
+    exit(EXIT_SUCCESS);
+  }
+}
+
 void killclient() {
   window_count -= 1;
   Window w = windows[window_count];
@@ -136,6 +153,8 @@ static void keypress_handler(XEvent* event) {
     spawn_term();
   else if (keysym == XK_c && (ev->state == Mod4Mask || ev->state == Mod5Mask))
     killclient();
+  else if (keysym == XK_l && (ev->state == Mod4Mask || ev->state == Mod5Mask))
+    spawn_dmenu();
 }
 
 static void mapnotify_handler(XEvent* event) {
