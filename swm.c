@@ -80,22 +80,16 @@ static void keypress_handler(XEvent* event) {
 
 static void mapnotify_handler(XEvent* event) {
   XMapEvent* ev = &event->xmap;
-  fprintf(logfile, "\t window: %ld\n", ev->window);
-  fprintf(logfile, "\t event: %ld\n", ev->event);
-  fprintf(logfile, "\t send event?: %d\n", ev->send_event);
-  fprintf(logfile, "\t overide redirect?: %d\n", ev->override_redirect);
+  fprintf(logfile, "MapN \t\t\t\t %ld \t\t event from %ld \n", ev->window,
+          ev->event);
 }
 
 static void maprequest_handler(XEvent* event) {
   XMapRequestEvent* ev = &event->xmaprequest;
   Window client = ev->window;
-  fprintf(logfile, "\t maprequest for client %ld\n", client);
-  fprintf(logfile, "\t parent %ld\n", ev->parent);
 
-  if (client == root) {
-    fprintf(logfile, "\t request is root, ignoring\n");
-    return;
-  }
+  fprintf(logfile, "MapR \t\t\t\t %ld \t\t parent %ld \n", ev->window,
+          ev->parent);
 
   XWindowAttributes wa;
   XGetWindowAttributes(display, client, &wa);
@@ -115,31 +109,22 @@ static void maprequest_handler(XEvent* event) {
 static void createnotify_handler(XEvent* event) {
   XCreateWindowEvent* cwe = &event->xcreatewindow;
   Window w = cwe->window;
-  fprintf(logfile, "\t client requesting %ld\n", w);
-  fprintf(logfile, "\t parent %ld\n", cwe->parent);
+  fprintf(logfile, "CreateR \t\t %ld\t\t parent %ld\n", w, cwe->parent);
 }
 
 static void destroy_handler(XEvent* event) {
   XDestroyWindowEvent* dwe = &event->xdestroywindow;
   Window w = dwe->window;
-  fprintf(logfile, "\t client requesting %ld\n", w);
-  fprintf(logfile, "\t event %ld\n", dwe->event);
-  if (w == root) {
-    fprintf(logfile, "\t request is root, ignoring\n");
-    return;
-  }
-
-  fprintf(logfile, "\t client destroyed %ld\n", w);
+  fprintf(logfile, "DestroyR \t\t %ld\t\t event %ld\n", w, dwe->event);
 }
 
 static void configurerequest_handler(XEvent* event) {
   XConfigureRequestEvent req = event->xconfigurerequest;
-  fprintf(logfile, "\t parent: %ld\n", req.parent);
-  fprintf(logfile, "\t window: %ld\n", req.window);
-  fprintf(logfile, "\t xywhb: %d,%d,%d,%d,%d\n", req.x, req.y, req.width,
-          req.height, req.border_width);
-  fprintf(logfile, "\t above: %ld\n", req.above);
-  fprintf(logfile, "\t val mask: %lx\n", req.value_mask);
+  fprintf(logfile,
+          "ConfR \t\t\t %ld \t\t xywhb: %d,%d,%d,%d,%d \t\t above: %ld \t\t "
+          "mask: 0x%lx \n",
+          req.window, req.x, req.y, req.width, req.height, req.border_width,
+          req.above, req.value_mask);
 
   XWindowChanges wc;
   wc.x = req.x;
@@ -151,12 +136,11 @@ static void configurerequest_handler(XEvent* event) {
 
 static void configurenotify_handler(XEvent* event) {
   XConfigureEvent* ev = &event->xconfigure;
-  fprintf(logfile, "\t event: %ld\n", ev->event);
-  fprintf(logfile, "\t window: %ld\n", ev->window);
-  fprintf(logfile, "\t xywhb: %d,%d,%d,%d,%d\n", ev->x, ev->y, ev->width,
-          ev->height, ev->border_width);
-  fprintf(logfile, "\t above: %ld\n", ev->above);
-  fprintf(logfile, "\t overide: %d\n", ev->override_redirect);
+
+  fprintf(logfile,
+          "ConfN \t\t\t %ld \t\t xywhb: %d,%d,%d,%d,%d \t\t above: %ld\n",
+          ev->window, ev->x, ev->y, ev->width, ev->height, ev->border_width,
+          ev->above);
 }
 
 static void propertynotify_handler(XEvent* event) {
@@ -166,12 +150,11 @@ static void propertynotify_handler(XEvent* event) {
   fprintf(logfile, "\t window: %ld\n", ev->window);
 }
 
-static void focusin_handler(XEvent* event) {
+static void focus_handler(XEvent* event) {
   XFocusChangeEvent* ev = &event->xfocus;
-  fprintf(logfile, "\t type: %d\n", ev->type);
-  fprintf(logfile, "\t window: %ld\n", ev->window);
-  fprintf(logfile, "\t mode: %d\n", ev->mode);
-  fprintf(logfile, "\t detail: %d\n", ev->detail);
+  fprintf(logfile, "%s \t\t %ld \t\t %d-%d\n",
+          (event->type == FocusIn ? "FocusIn" : "FocusOut"), ev->window,
+          ev->mode, ev->detail);
 }
 
 static void run() {
@@ -186,27 +169,21 @@ static void run() {
         keypress_handler(&event);
         break;
       case ConfigureRequest:
-        fprintf(logfile, "Received configure request event\n");
         configurerequest_handler(&event);
         break;
       case ConfigureNotify:
-        fprintf(logfile, "Received configure notify event\n");
         configurenotify_handler(&event);
         break;
       case MapRequest:
-        fprintf(logfile, "Received maprequest event\n");
         maprequest_handler(&event);
         break;
       case MapNotify:
-        fprintf(logfile, "Received map notify event\n");
         mapnotify_handler(&event);
         break;
       case CreateNotify:
-        fprintf(logfile, "Received CreateNotify event\n");
         createnotify_handler(&event);
         break;
       case DestroyNotify:
-        fprintf(logfile, "Received DestroyNotify event\n");
         destroy_handler(&event);
         break;
       case PropertyNotify:
@@ -214,12 +191,10 @@ static void run() {
         propertynotify_handler(&event);
         break;
       case FocusIn:
-        fprintf(logfile, "Received FocusIn event\n");
-        focusin_handler(&event);
+        focus_handler(&event);
         break;
       case FocusOut:
-        fprintf(logfile, "Received FocusOut event\n");
-        focusin_handler(&event);
+        focus_handler(&event);
         break;
       default:
         fprintf(logfile, "Received event-type: %d\n", event.type);
