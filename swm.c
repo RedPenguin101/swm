@@ -54,6 +54,17 @@ int xerror(Display* dpy, XErrorEvent* ee) {
   return xerrorxlib(dpy, ee); /* may call exit */
 }
 
+static void grabkeys() {
+  XUngrabKey(display, AnyKey, AnyModifier, root);
+
+  XGrabKey(display, XKeysymToKeycode(display, XK_q), Mod4Mask, root, True,
+           GrabModeAsync, GrabModeAsync);
+  XGrabKey(display, XKeysymToKeycode(display, XK_c), Mod4Mask, root, True,
+           GrabModeAsync, GrabModeAsync);
+  XGrabKey(display, XKeysymToKeycode(display, XK_t), Mod4Mask, root, True,
+           GrabModeAsync, GrabModeAsync);
+}
+
 static void setup() {
   logfile = fopen("/home/joe/programming/projects/swm/log_swm.txt", "w");
   fprintf(logfile, "START SESSION LOG\n");
@@ -71,6 +82,8 @@ static void setup() {
   WMState = XInternAtom(display, "WM_STATE", False);
   WMTakeFocus = XInternAtom(display, "WM_TAKE_FOCUS", False);
 
+  grabkeys();
+
   XSetWindowAttributes wa;
 
   XftColorAllocName(display, DefaultVisual(display, screen),
@@ -85,7 +98,7 @@ static void setup() {
   wa.cursor = cursor;
 
   wa.event_mask = SubstructureRedirectMask | SubstructureNotifyMask |
-                  KeyPressMask | ButtonPressMask | PointerMotionMask;
+                  ButtonPressMask | PointerMotionMask;
 
   XSelectInput(display, root, wa.event_mask);
   XMoveResizeWindow(display, root, 0, 0, screen_w, screen_h);
@@ -187,11 +200,6 @@ static void maprequest_handler(XEvent* event) {
                EnterWindowMask | FocusChangeMask | PropertyChangeMask |
                    StructureNotifyMask);
 
-  XUngrabKey(display, AnyKey, AnyModifier, root);
-  XGrabKey(display, XKeysymToKeycode(display, XK_q), Mod4Mask | Mod5Mask, root,
-           True, GrabModeAsync, GrabModeAsync);
-  XGrabKey(display, XKeysymToKeycode(display, XK_c), Mod4Mask | Mod5Mask, root,
-           True, GrabModeAsync, GrabModeAsync);
   XMoveResizeWindow(display, window, 0, 0, screen_w, screen_h);
   XMapWindow(display, window);
   XSync(display, false);
@@ -263,6 +271,16 @@ static void enter_handler(XEvent* event) {
       ev->mode, ev->detail, ev->same_screen, ev->focus, ev->state);
 }
 
+static void mappingnotify_handler(XEvent* event) {
+  XMappingEvent* ev = &event->xmapping;
+  // if (verbose)
+  fprintf(logfile, "Mapping \t\t %ld \t\t request %d \t fcc %d \t count %d\n",
+          ev->window, ev->request, ev->first_keycode, ev->count);
+  XRefreshKeyboardMapping(ev);
+  if (ev->request == MappingKeyboard)
+    grabkeys();
+}
+
 static void run() {
   XEvent event;
   while (running && XNextEvent(display, &event) == 0) {
@@ -283,6 +301,9 @@ static void run() {
         break;
       case MapNotify:
         mapnotify_handler(&event);
+        break;
+      case MappingNotify:
+        mappingnotify_handler(&event);
         break;
       case UnmapNotify:
         unmapnotify_handler(&event);
