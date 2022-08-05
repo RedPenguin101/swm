@@ -1,0 +1,6 @@
+How to get a solid background for root?
+Maintain shortcuts from client
+Handle a second client launched from first shell client
+Make default size better
+
+DONE Handle a second client launched from command
