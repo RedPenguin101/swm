@@ -184,23 +184,29 @@ static void run() {
         printf("Received configure request event\n");
         fprintf(logfile, "Received configure request event\n");
         configurerequest_handler(&event);
+        break;
       case MapRequest:
         printf("Received maprequest event\n");
         fprintf(logfile, "Received maprequest event\n");
         maprequest_handler(&event);
+        break;
       case DestroyNotify:
         fprintf(logfile, "Received DestroyNotify event\n");
         printf("Received DestroyNotify event\n");
         destroy_handler(&event);
+        break;
       case PropertyNotify:
         fprintf(logfile, "Received PropertyNotify event\n");
         propertynotify_handler(&event);
+        break;
       case FocusIn:
         fprintf(logfile, "Received FocusIn event\n");
         focusin_handler(&event);
+        break;
       case FocusOut:
         fprintf(logfile, "Received FocusOut event\n");
         focusin_handler(&event);
+        break;
       default:
         printf("event-type: %d\n", event.type);
         fprintf(logfile, "Received event-type: %d\n", event.type);
