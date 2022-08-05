@@ -161,6 +161,16 @@ static void focus_handler(XEvent* event) {
           ev->mode, ev->detail);
 }
 
+static void enter_handler(XEvent* event) {
+  XCrossingEvent* ev = &event->xcrossing;
+  fprintf(
+      logfile,
+      "Cross \t\t\t %ld \t\t root: %ld sub: %ld\t\t pos: %d,%d,%d,%d \t md: "
+      "%d-%d \t samescreen: %d \t focus: %d \t state 0x%x\n",
+      ev->window, ev->root, ev->subwindow, ev->x, ev->y, ev->x_root, ev->y_root,
+      ev->mode, ev->detail, ev->same_screen, ev->focus, ev->state);
+}
+
 static void run() {
   XEvent event;
   while (running && XNextEvent(display, &event) == 0) {
@@ -197,6 +207,9 @@ static void run() {
         break;
       case FocusOut:
         focus_handler(&event);
+        break;
+      case EnterNotify:
+        enter_handler(&event);
         break;
       default:
         fprintf(logfile, "Received event-type: %d\n", event.type);
