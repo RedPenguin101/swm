@@ -69,7 +69,7 @@ void spawn_term() {
 static void keypress_handler(XEvent* event) {
   XKeyEvent* ev = &event->xkey;
   KeySym keysym = XKeycodeToKeysym(display, ev->keycode, 0);
-  fprintf(logfile, "KeySym: %ld ", keysym);
+  fprintf(logfile, "Keypress \t\t KeySym: %ld ", keysym);
   fprintf(logfile, "State: %d\n", ev->state);
   if (keysym == XK_q && (ev->state == ControlMask || ev->state == Mod4Mask ||
                          ev->state == Mod5Mask))
@@ -90,9 +90,10 @@ static void maprequest_handler(XEvent* event) {
   XMapRequestEvent* ev = &event->xmaprequest;
   Window client = ev->window;
 
-  fprintf(logfile, "MapR \t\t\t\t %ld \t\t parent %ld \n", ev->window,
-          ev->parent);
   window_count += 1;
+
+  fprintf(logfile, "MapR \t\t\t\t %ld \t\t parent %ld \t window count %d\n",
+          ev->window, ev->parent, window_count);
 
   XWindowAttributes wa;
   XGetWindowAttributes(display, client, &wa);
@@ -163,12 +164,10 @@ static void focus_handler(XEvent* event) {
 static void run() {
   XEvent event;
   while (running && XNextEvent(display, &event) == 0) {
-    fflush(logfile);
     switch (event.type) {
       case MotionNotify:
         break;
       case KeyPress:
-        fprintf(logfile, "Received keypress event ");
         keypress_handler(&event);
         break;
       case ConfigureRequest:
@@ -202,6 +201,8 @@ static void run() {
       default:
         fprintf(logfile, "Received event-type: %d\n", event.type);
     }
+    XSync(display, false);
+    fflush(logfile);
   }
 }
 
