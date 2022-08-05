@@ -158,6 +158,13 @@ static void configurerequest_handler(XEvent* event) {
           req.window, req.x, req.y, req.width, req.height, req.border_width,
           req.above, req.value_mask);
 
+  XWindowAttributes rwa;
+  XGetWindowAttributes(display, root, &rwa);
+
+  fprintf(logfile, "\t\t ScreenH: %d ScreenW: %d RootH: %d RootW: %d \n",
+          DisplayWidth(display, screen), DisplayHeight(display, screen),
+          rwa.width, rwa.height);
+
   XWindowChanges wc;
   wc.x = req.x;
   wc.y = req.y;
