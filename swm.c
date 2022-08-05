@@ -1,6 +1,7 @@
 #include <X11/Xatom.h>
 #include <X11/Xft/Xft.h>
 #include <X11/Xlib.h>
+#include <X11/Xproto.h>
 #include <X11/cursorfont.h>
 #include <X11/keysym.h>
 #include <stdbool.h>
@@ -20,15 +21,37 @@ static int running = true;
 static Display* display;
 static Window root;
 
+static int (*xerrorxlib)(Display*, XErrorEvent*);
+
 int window_count = 0;
 
 // style
 
 FILE* logfile;
 
+int xerror(Display* dpy, XErrorEvent* ee) {
+  if (ee->error_code == BadWindow ||
+      (ee->request_code == X_SetInputFocus && ee->error_code == BadMatch) ||
+      (ee->request_code == X_PolyText8 && ee->error_code == BadDrawable) ||
+      (ee->request_code == X_PolyFillRectangle &&
+       ee->error_code == BadDrawable) ||
+      (ee->request_code == X_PolySegment && ee->error_code == BadDrawable) ||
+      (ee->request_code == X_ConfigureWindow && ee->error_code == BadMatch) ||
+      (ee->request_code == X_GrabButton && ee->error_code == BadAccess) ||
+      (ee->request_code == X_GrabKey && ee->error_code == BadAccess) ||
+      (ee->request_code == X_CopyArea && ee->error_code == BadDrawable))
+    return 0;
+  fprintf(logfile, "fatal error: request code=%d, error code=%d\n",
+          ee->request_code, ee->error_code);
+  fflush(logfile);
+  return xerrorxlib(dpy, ee); /* may call exit */
+}
+
 static void setup() {
   logfile = fopen("/home/joe/programming/projects/swm/log_swm.txt", "w");
   fprintf(logfile, "START SESSION LOG\n");
+
+  XSetErrorHandler(xerror);
 
   screen = DefaultScreen(display);
   screen_w = DisplayWidth(display, screen);
