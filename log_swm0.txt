@@ -1,0 +1,10 @@
+START SESSION LOG
+Root window 1980
+Keypress 		 KeySym: 104 state = 0x0
+Keypress 		 KeySym: 101 state = 0x0
+Keypress 		 KeySym: 108 state = 0x0
+Keypress 		 KeySym: 108 state = 0x0
+Keypress 		 KeySym: 111 state = 0x0
+Keypress 		 KeySym: 119 state = 0x0
+Keypress 		 KeySym: 113 state = 0x0
+END SESSION LOG
