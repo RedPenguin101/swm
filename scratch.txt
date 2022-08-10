@@ -25,3 +25,52 @@ conf
 0x40    1000000 CWStackMode
 
 0xC = height and width
+
+FOCUS
+Modes:
+  0 NotifyNormal, 
+  1 NotifyGrab, 
+  2 NotifyUngrab
+  3 NotifyWhileGrabbed,
+Details
+  0 NotifyAncestor, 
+  1 NotifyVirtual, 
+  2 NotifyInferior,
+  3 NotifyNonlinear,
+  4 NotifyNonlinearVirtual,
+  5 NotifyPointer,
+  6 NotifyPointerRoot, 
+  7 NotifyDetailNone
+	 
+
+event masks
+
+                        1 KeyPressMask			(1L<<0)
+                       10 KeyReleaseMask			(1L<<1)
+                      100 ButtonPressMask			(1L<<2)
+                     1000 ButtonReleaseMask		(1L<<3)
+                    10000 EnterWindowMask			(1L<<4)
+                   100000 LeaveWindowMask			(1L<<5)
+                  1000000 PointerMotionMask		(1L<<6)
+                 10000000 PointerMotionHintMask		(1L<<7)
+                100000000 Button1MotionMask		(1L<<8)
+               1000000000 Button2MotionMask		(1L<<9)
+              10000000000 Button3MotionMask		(1L<<10)
+             100000000000 Button4MotionMask		(1L<<11)
+            1000000000000 Button5MotionMask		(1L<<12)
+           10000000000000 ButtonMotionMask		(1L<<13)
+          100000000000000 KeymapStateMask			(1L<<14)
+         1000000000000000 ExposureMask			(1L<<15)
+        10000000000000000 VisibilityChangeMask		(1L<<16)
+       100000000000000000 StructureNotifyMask		(1L<<17)
+      1000000000000000000 ResizeRedirectMask		(1L<<18)
+     10000000000000000000 SubstructureNotifyMask		(1L<<19)
+    100000000000000000000 SubstructureRedirectMask	(1L<<20)
+   1000000000000000000000 FocusChangeMask			(1L<<21)
+  10000000000000000000000 PropertyChangeMask		(1L<<22)
+ 100000000000000000000000 ColormapChangeMask		(1L<<23)
+1000000000000000000000000 OwnerGrabButtonMask		(1L<<24)
+
+  11000111000000001111111 = propchange, focchange, StructN, VisChange,
+                            Exposure, PointerM, Leave, Enter, ButtonP/R, Keys
+  11000111010000001111111 = Same, but also button motion

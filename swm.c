@@ -192,6 +192,9 @@ static void unmapnotify_handler(XEvent* event) {
 
   if (window_count == 0)
     XSetInputFocus(display, root, RevertToPointerRoot, CurrentTime);
+  else
+    XSetInputFocus(display, windows[window_count - 1], RevertToPointerRoot,
+                   CurrentTime);
 }
 
 static void maprequest_handler(XEvent* event) {
