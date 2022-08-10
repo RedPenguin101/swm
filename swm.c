@@ -207,12 +207,21 @@ static void maprequest_handler(XEvent* event) {
   XWindowAttributes wa;
   XGetWindowAttributes(display, window, &wa);
 
+  if (verbose)
+    fprintf(logfile,
+            "\tReceived WA: xywhb=%d,%d,%d,%d,%d, IO:%d, mapstate=%d, "
+            "all-ems=%ld, your-ems=%ld, DNP=%ld, override=%d\n",
+            wa.x, wa.y, wa.width, wa.height, wa.border_width, wa.class,
+            wa.map_state, wa.all_event_masks, wa.your_event_mask,
+            wa.do_not_propagate_mask, wa.override_redirect);
+
   XSelectInput(display, window,
                EnterWindowMask | FocusChangeMask | PropertyChangeMask |
                    StructureNotifyMask);
 
   XMoveResizeWindow(display, window, 0, 0, screen_w, screen_h);
   XMapWindow(display, window);
+  XSetInputFocus(display, window, RevertToPointerRoot, CurrentTime);
 }
 
 static void createnotify_handler(XEvent* event) {
