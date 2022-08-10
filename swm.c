@@ -73,7 +73,8 @@ static void setup() {
   screen_w = DisplayWidth(display, screen);
   screen_h = DisplayHeight(display, screen);
   root = RootWindow(display, screen);
-  fprintf(logfile, "Root window %ld\n", root);
+  fprintf(logfile, "Root window %ld \t\t w/h=%d,%d\n", root, screen_w,
+          screen_h);
 
   grabkeys();
 
@@ -232,16 +233,17 @@ static void configurerequest_handler(XEvent* event) {
   XConfigureRequestEvent req = event->xconfigurerequest;
   fprintf(logfile,
           "ConfR \t\t\t %ld \t\t xywhb: %d,%d,%d,%d,%d \t\t parent: %ld above: "
-          "%ld \t\t detail: %d mask: 0x%lx \n",
+          "%ld \t\t detail: %d mask: 0x%lx passed mask: 0x%lx\n",
           req.window, req.x, req.y, req.width, req.height, req.border_width,
-          req.parent, req.above, req.detail, req.value_mask);
+          req.parent, req.above, req.detail, req.value_mask,
+          0x3f & req.value_mask);
 
   XWindowChanges wc;
   wc.x = req.x;
   wc.y = req.y;
   wc.width = req.width;
   wc.height = req.height;
-  XConfigureWindow(display, req.window, CWStackMode ^ req.value_mask, &wc);
+  XConfigureWindow(display, req.window, 0x3f & req.value_mask, &wc);
 }
 
 static void configurenotify_handler(XEvent* event) {
