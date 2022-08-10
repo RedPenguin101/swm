@@ -169,8 +169,9 @@ static void keypress_handler(XEvent* event) {
 
 static void mapnotify_handler(XEvent* event) {
   XMapEvent* ev = &event->xmap;
-  fprintf(logfile, "MapN \t\t\t\t %ld \t\t event from %ld \n", ev->window,
-          ev->event);
+  if (verbose)
+    fprintf(logfile, "MapN \t\t\t\t %ld \t\t event from %ld \n", ev->window,
+            ev->event);
 }
 
 static void unmapnotify_handler(XEvent* event) {
@@ -260,11 +261,11 @@ static void configurerequest_handler(XEvent* event) {
 
 static void configurenotify_handler(XEvent* event) {
   XConfigureEvent* ev = &event->xconfigure;
-  if (verbose)
-    fprintf(logfile,
-            "ConfN \t\t\t %ld \t\t xywhb: %d,%d,%d,%d,%d \t\t above: %ld\n",
-            ev->window, ev->x, ev->y, ev->width, ev->height, ev->border_width,
-            ev->above);
+  // if (verbose)
+  fprintf(logfile,
+          "ConfN \t\t\t %ld \t\t xywhb: %d,%d,%d,%d,%d \t\t above: %ld\n",
+          ev->window, ev->x, ev->y, ev->width, ev->height, ev->border_width,
+          ev->above);
 }
 
 static void propertynotify_handler(XEvent* event) {
@@ -276,9 +277,10 @@ static void propertynotify_handler(XEvent* event) {
 
 static void focus_handler(XEvent* event) {
   XFocusChangeEvent* ev = &event->xfocus;
-  fprintf(logfile, "%s \t\t %ld \t\t mode-detail: %d-%d\n",
-          (event->type == FocusIn ? "FocusIn" : "FocusOut"), ev->window,
-          ev->mode, ev->detail);
+  if (verbose)
+    fprintf(logfile, "%s \t\t %ld \t\t mode-detail: %d-%d\n",
+            (event->type == FocusIn ? "FocusIn" : "FocusOut"), ev->window,
+            ev->mode, ev->detail);
 }
 
 static void enter_handler(XEvent* event) {
