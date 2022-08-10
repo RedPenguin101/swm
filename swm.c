@@ -52,6 +52,7 @@ int xerror(Display* dpy, XErrorEvent* ee) {
 static void grabkeys() {
   XUngrabKey(display, AnyKey, AnyModifier, root);
 
+  // q = quit, c = close, t = terminal, l = launcher
   XGrabKey(display, XKeysymToKeycode(display, XK_q), Mod4Mask, root, True,
            GrabModeAsync, GrabModeAsync);
   XGrabKey(display, XKeysymToKeycode(display, XK_c), Mod4Mask, root, True,
@@ -97,7 +98,6 @@ static void setup() {
   XChangeWindowAttributes(display, root, CWBackPixel | CWEventMask | CWCursor,
                           &wa);
   XClearWindow(display, root);
-  XSync(display, false);
 }
 
 void spawn_term() {
@@ -137,7 +137,6 @@ void killclient() {
   if (window_count == 0)
     XSetInputFocus(display, root, RevertToPointerRoot, CurrentTime);
 
-  XSync(display, False);
   XUngrabServer(display);
 }
 
@@ -211,7 +210,6 @@ static void maprequest_handler(XEvent* event) {
 
   XMoveResizeWindow(display, window, 0, 0, screen_w, screen_h);
   XMapWindow(display, window);
-  XSync(display, false);
 }
 
 static void createnotify_handler(XEvent* event) {
@@ -338,8 +336,6 @@ static void run() {
       default:
         fprintf(logfile, "Unhandled event-type: %d\n", event.type);
     }
-    XSync(display, false);
-    fflush(logfile);
   }
 }
 
@@ -347,7 +343,6 @@ static void cleanup() {
   for (int i = 0; i < window_count; i++)
     XUnmapWindow(display, windows[i]);
   fprintf(logfile, "END SESSION LOG\n");
-  fflush(logfile);
   fclose(logfile);
 }
 
