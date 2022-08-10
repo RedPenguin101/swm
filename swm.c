@@ -98,6 +98,7 @@ static void setup() {
   XChangeWindowAttributes(display, root, CWBackPixel | CWEventMask | CWCursor,
                           &wa);
   XClearWindow(display, root);
+  XSync(display, false);
 }
 
 void spawn_term() {
@@ -212,6 +213,7 @@ static void maprequest_handler(XEvent* event) {
 
   XMoveResizeWindow(display, window, 0, 0, screen_w, screen_h);
   XMapWindow(display, window);
+  XSync(display, false);
 }
 
 static void createnotify_handler(XEvent* event) {
@@ -289,6 +291,7 @@ static void mappingnotify_handler(XEvent* event) {
   XRefreshKeyboardMapping(ev);
   if (ev->request == MappingKeyboard)
     grabkeys();
+  XSync(display, false);
 }
 
 static void run() {
