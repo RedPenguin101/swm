@@ -265,25 +265,26 @@ static void propertynotify_handler(XEvent* event) {
 
 static void focus_handler(XEvent* event) {
   XFocusChangeEvent* ev = &event->xfocus;
-  fprintf(logfile, "%s \t\t %ld \t\t %d-%d\n",
+  fprintf(logfile, "%s \t\t %ld \t\t mode-detail: %d-%d\n",
           (event->type == FocusIn ? "FocusIn" : "FocusOut"), ev->window,
           ev->mode, ev->detail);
 }
 
 static void enter_handler(XEvent* event) {
   XCrossingEvent* ev = &event->xcrossing;
-  fprintf(
-      logfile,
-      "Cross \t\t\t %ld \t\t root: %ld sub: %ld\t\t pos: %d,%d,%d,%d \t md: "
-      "%d-%d \t samescreen: %d \t focus: %d \t state 0x%x\n",
-      ev->window, ev->root, ev->subwindow, ev->x, ev->y, ev->x_root, ev->y_root,
-      ev->mode, ev->detail, ev->same_screen, ev->focus, ev->state);
+  fprintf(logfile,
+          "Cross \t\t\t %ld \t\t root: %ld sub: %ld\t\t pos: %d,%d,%d,%d \t "
+          "mode-detail: "
+          "%d-%d \t samescreen: %d \t focus: %d \t state 0x%x\n",
+          ev->window, ev->root, ev->subwindow, ev->x, ev->y, ev->x_root,
+          ev->y_root, ev->mode, ev->detail, ev->same_screen, ev->focus,
+          ev->state);
 }
 
 static void mappingnotify_handler(XEvent* event) {
   XMappingEvent* ev = &event->xmapping;
   // if (verbose)
-  fprintf(logfile, "Mapping \t\t %ld \t\t request %d \t fcc %d \t count %d\n",
+  fprintf(logfile, "MappingN \t\t %ld \t\t request %d \t fkc %d \t count %d\n",
           ev->window, ev->request, ev->first_keycode, ev->count);
   XRefreshKeyboardMapping(ev);
   if (ev->request == MappingKeyboard)
