@@ -127,7 +127,15 @@ void spawn_dmenu() {
   }
 }
 
-void killclient() {
+int find_window_index(Window w) {
+  for (int i = 0; i < window_count; i++) {
+    if (windows[i] == w)
+      return i;
+  }
+  return -1;
+}
+
+void kill_window() {
   window_count -= 1;
   Window w = windows[window_count];
   XGrabServer(display);
@@ -140,6 +148,8 @@ void killclient() {
   XUngrabServer(display);
 }
 
+/* Handlers*/
+
 static void keypress_handler(XEvent* event) {
   XKeyEvent* ev = &event->xkey;
   KeySym keysym = XKeycodeToKeysym(display, ev->keycode, 0);
@@ -151,7 +161,7 @@ static void keypress_handler(XEvent* event) {
   else if (keysym == XK_t && (ev->state == Mod4Mask || ev->state == Mod5Mask))
     spawn_term();
   else if (keysym == XK_c && (ev->state == Mod4Mask || ev->state == Mod5Mask))
-    killclient();
+    kill_window();
   else if (keysym == XK_l && (ev->state == Mod4Mask || ev->state == Mod5Mask))
     spawn_dmenu();
 }
@@ -160,14 +170,6 @@ static void mapnotify_handler(XEvent* event) {
   XMapEvent* ev = &event->xmap;
   fprintf(logfile, "MapN \t\t\t\t %ld \t\t event from %ld \n", ev->window,
           ev->event);
-}
-
-int find_window_index(Window w) {
-  for (int i = 0; i < window_count; i++) {
-    if (windows[i] == w)
-      return i;
-  }
-  return -1;
 }
 
 static void unmapnotify_handler(XEvent* event) {
@@ -214,9 +216,9 @@ static void maprequest_handler(XEvent* event) {
 
 static void createnotify_handler(XEvent* event) {
   XCreateWindowEvent* cwe = &event->xcreatewindow;
-  Window w = cwe->window;
   if (verbose)
-    fprintf(logfile, "CreateR \t\t %ld\t\t parent %ld\n", w, cwe->parent);
+    fprintf(logfile, "CreateR \t\t %ld\t\t parent %ld\n", cwe->window,
+            cwe->parent);
 }
 
 static void destroy_handler(XEvent* event) {
