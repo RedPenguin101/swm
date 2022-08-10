@@ -98,7 +98,6 @@ static void setup() {
   XChangeWindowAttributes(display, root, CWBackPixel | CWEventMask | CWCursor,
                           &wa);
   XClearWindow(display, root);
-  XSync(display, false);
 }
 
 void spawn_term() {
@@ -213,7 +212,6 @@ static void maprequest_handler(XEvent* event) {
 
   XMoveResizeWindow(display, window, 0, 0, screen_w, screen_h);
   XMapWindow(display, window);
-  XSync(display, false);
 }
 
 static void createnotify_handler(XEvent* event) {
@@ -233,20 +231,17 @@ static void destroy_handler(XEvent* event) {
 static void configurerequest_handler(XEvent* event) {
   XConfigureRequestEvent req = event->xconfigurerequest;
   fprintf(logfile,
-          "ConfR \t\t\t %ld \t\t xywhb: %d,%d,%d,%d,%d \t\t above: %ld \t\t "
-          "mask: 0x%lx \n",
+          "ConfR \t\t\t %ld \t\t xywhb: %d,%d,%d,%d,%d \t\t parent: %ld above: "
+          "%ld \t\t detail: %d mask: 0x%lx \n",
           req.window, req.x, req.y, req.width, req.height, req.border_width,
-          req.above, req.value_mask);
-
-  XWindowAttributes rwa;
-  XGetWindowAttributes(display, root, &rwa);
+          req.parent, req.above, req.detail, req.value_mask);
 
   XWindowChanges wc;
   wc.x = req.x;
   wc.y = req.y;
   wc.width = req.width;
   wc.height = req.height;
-  XConfigureWindow(display, req.window, req.value_mask, &wc);
+  XConfigureWindow(display, req.window, CWStackMode ^ req.value_mask, &wc);
 }
 
 static void configurenotify_handler(XEvent* event) {
@@ -291,7 +286,6 @@ static void mappingnotify_handler(XEvent* event) {
   XRefreshKeyboardMapping(ev);
   if (ev->request == MappingKeyboard)
     grabkeys();
-  XSync(display, false);
 }
 
 static void run() {

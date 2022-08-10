@@ -23,3 +23,5 @@ conf
 0x10      10000 CWBorderWidth
 0x20     100000 CWSibling
 0x40    1000000 CWStackMode
+
+0xC = height and width

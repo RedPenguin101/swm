@@ -1,6 +1,9 @@
-Shifting windows
+Shifting windows: Mod arrow left / right to shift
 Time / status in launchers
 Dynamic dispatch for handlers
+Sound volume controls
+Mouse button multitap emulation.
+Bug: Second window doesnt take keyboard control sometimes?
 
 DONE Mod+L for Launcher
 DONE Handle a second client launched from command
@@ -8,3 +11,4 @@ DONE How to get a solid background for root?
 DONE Maintain shortcuts from client
 DONE Handle a second client launched from first shell client
 DONE Make default size better
+
