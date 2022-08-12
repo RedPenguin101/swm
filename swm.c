@@ -20,6 +20,7 @@ static int (*xerrorxlib)(Display*, XErrorEvent*);
 
 Window windows[20] = {0};
 int window_count = 0;
+int current_window = 0;
 
 XftColor col_bg, col_fg, col_border;
 
@@ -60,6 +61,10 @@ static void grabkeys() {
   XGrabKey(display, XKeysymToKeycode(display, XK_t), Mod4Mask, root, True,
            GrabModeAsync, GrabModeAsync);
   XGrabKey(display, XKeysymToKeycode(display, XK_l), Mod4Mask, root, True,
+           GrabModeAsync, GrabModeAsync);
+  XGrabKey(display, XKeysymToKeycode(display, XK_j), Mod4Mask, root, True,
+           GrabModeAsync, GrabModeAsync);
+  XGrabKey(display, XKeysymToKeycode(display, XK_k), Mod4Mask, root, True,
            GrabModeAsync, GrabModeAsync);
 }
 
@@ -149,6 +154,17 @@ void kill_window() {
   XUngrabServer(display);
 }
 
+static void show_window(int idx) {
+  Window window = windows[idx];
+  XMoveWindow(display, window, 0, 0);
+  XSetInputFocus(display, window, RevertToPointerRoot, CurrentTime);
+}
+
+static void hide_window(int idx) {
+  Window window = windows[idx];
+  XMoveWindow(display, window, screen_w * -2, 0);
+}
+
 /* Handlers*/
 
 static void keypress_handler(XEvent* event) {
@@ -165,6 +181,18 @@ static void keypress_handler(XEvent* event) {
     kill_window();
   else if (keysym == XK_l && (ev->state == Mod4Mask || ev->state == Mod5Mask))
     spawn_dmenu();
+  else if (keysym == XK_j && (ev->state == Mod4Mask || ev->state == Mod5Mask) &&
+           current_window < window_count - 1) {
+    hide_window(current_window);
+    current_window += 1;
+    show_window(current_window);
+  } else if (keysym == XK_k &&
+             (ev->state == Mod4Mask || ev->state == Mod5Mask) &&
+             current_window > 0) {
+    hide_window(current_window);
+    current_window -= 1;
+    show_window(current_window);
+  }
 }
 
 static void mapnotify_handler(XEvent* event) {
@@ -204,6 +232,7 @@ static void maprequest_handler(XEvent* event) {
 
   windows[window_count] = window;
   window_count += 1;
+  current_window = window_count - 1;
 
   fprintf(logfile, "MapR \t\t\t\t %ld \t\t parent %ld \t window count %d\n",
           ev->window, ev->parent, window_count);
