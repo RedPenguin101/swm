@@ -1,4 +1,115 @@
 # Devlog
+## 12th/13th August
+### Shifting windows with mod-arrow.
+Obviously, need to figure out which keys are arrow keys.
+Or maybe make it jk for now.
+Maybe that's better actually.
+The thing is, what to do with empty 'slots'? just skip them?
+Or more proactive 'scan'?
+
+1. Open window 1, fills screen (curr=0 count=1)
+2. Open window 2, fills screen, replace w1. (curr=1 count=2)
+3. "Shift" - move 'pointer' to earlier window (curr=0 count=1)
+
+Got this working, pretty simple:
+
+```c
+static void show_window(int idx) {
+  Window window = windows[idx];
+  XMoveWindow(display, window, 0, 0);
+  XSetInputFocus(display, window, RevertToPointerRoot, CurrentTime);
+}
+
+static void hide_window(int idx) {
+  Window window = windows[idx];
+  XMoveWindow(display, window, screen_w * -2, 0);
+}
+
+// then in keypress handler
+
+  else if (keysym == XK_j && (ev->state == Mod4Mask || ev->state == Mod5Mask) &&
+           current_window < window_count - 1) {
+    hide_window(current_window); // current window is a new global
+    current_window += 1;
+    show_window(current_window);
+```
+
+Slightly interesting bit here: to 'hide' a window you just move it off to the left of the screen. I copied this from dwm.
+
+### Closing clients
+Up to now, the WM has operated like a strict stack: the 'top' of the stack is always what is displayed.
+So killing the visible window will always be killing the top of the stack, and reverting to the next window.
+This is hard-coded into the program - you can't unmap something that isn't at the top of the stack.
+
+```c
+  else if (idx != window_count - 1)
+    fprintf(logfile, "\t Window wasn't top of stack\n");
+```
+
+Now the user has the ability to move around in the stack, they could be closing windows that are not top of the stack, so I need to handle that:
+
+* Allow users to close windows that are not top of the stack
+* Do that in such a way that there are not 'gaps' in the client array
+* Manage the case where the user closes the focused window (which will be the most common user case).
+
+There are two ways a window can be closed:
+* The client closes itself (including on user command) and sends an `unmapnotify` to Xorg
+* The WM 'kills' the client with a command (currently this is done with the `kill_window` function.)
+
+I think it makes sense to harmonize these a bit with an `unmanage_client` function, that:
+
+1. Given a client number (array index), figures out which window it is (just an array lookup)
+2. Shuffles the client list around so there are no 'holes'
+3. Figures out which client it should be displaying now, and displays it.
+
+[A Side Note, I really need to make a better distinction between 'clients' and 'windows' in the code.]
+
+Looking at some scenarios of client list befores and afters:
+
+```
+  v unmanage this
+12345
+1245
+
+    v unmanage this
+12345
+1234
+
+v unmanage this
+12345
+2345
+```
+
+So I think this is a simple case of iterating through the array of the idx following the killed client and shifting them down one to close the gap.
+
+If the client that's unmanaged is the current client (which it probably will be), we need to decide what the _new_ client is, and display this.
+If it's the top of the stack, you need to move it to the previous one.
+If it's the first in the stack, you need to move it to the _next_ one.
+If it's in the middle, it could be either. Arbitrarily I'll say it should be the next one.
+
+(Note that, even if the unmanaged client _isn't_ the visible window, we'll need to change the current client if it has a higher index than the unmanaged one)
+
+```
+     v unmanaged=5
+xxxxxX
+xxxxX
+    ^new=4
+
+Xxxxxx
+Xxxxx (after client moves)
+0->0
+
+xxxXxx
+xxxXx (after client moves)
+3->3
+
+X
+-
+```
+The main addition is the `unmanage_client` which works as described above.
+I also changed `kill_window` to accept an actual window as a parameter (since it won't be able to assume it's the top of the stack anymore),
+and updated unmap handlers and close client keypress handler to use `unmanage_client`.
+
 ## 10th August
 ### Crashing after trying to remove XSyncs
 I wanted to take out the XSyncs because I was doing it once per run-loop, which I'm sure is massively wasteful.
@@ -147,3 +258,39 @@ static void unmapnotify_handler(XEvent* event) {
 ```
 
 That seems to work OK.
+
+But I'm done with this - bit of a rabbit hole!
+
+### Surf sizing
+One thing I noticed is that Surf thinks it's in a tiny window when it's not.
+When I search it's all squished to the left.
+
+```
+ConfR 			 10485763 		 xywhb: 0,0,800,600,0 		 parent: 1980 above: 0 		 detail: 0 mask: 0x40 passed mask: 0x0
+MapR 				 10485763 		 parent 1980 	 window count 2
+	Received WA: xywhb=0,0,800,600,0, IO:1, mapstate=0, all-ems=4947968, your-ems=0, DNP=0, override=0
+UnmapN 			 10485763 		 event from 10485763 	 Window not found
+END SESSION LOG
+```
+
+So first I get a confR from surf with 800x600 size. 
+I straight up pass that on to Xorg.
+_Then_ I get a MapR, again with 800x600, but instead I do a `XMoveResizeWindow(display, window, 0, 0, screen_w, screen_h);`
+
+Does this pass the memo on to the window itself? What if I get the WA after I do the resize?
+
+```
+MapR 				 10485763 		 parent 1980 	 window count 2
+	Received WA: xywhb=0,0,800,600,0, IO:1, mapstate=0, all-ems=4947968, your-ems=0, DNP=0, override=0
+	Post resize WA: xywhb=0,0,3840,2160,0, IO:1, mapstate=2, all-ems=7045136, your-ems=6422544, DNP=0, override=0
+```
+
+This all seems fine. 
+I think maybe I need to pass the message on to Surf that I've ignored it's sizing request?
+
+DWMs configure request handler (`configurerequest(XEvent* e)`) has some pretty gnarly triple-nested ifs, but I think at some point it calls `configure(c)`, which I _think_ messages back to the Window?
+I also think it only calls `XConfigureWindow` if it doesn't have the window mapped as a client.
+
+I tried a few things here, including sending surf a confignotify event, but I'm pretty sure that X already does that on XConfigure.
+
+Putting a pin in this for now, since it seems like it's isolated to surf.

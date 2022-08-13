@@ -141,9 +141,7 @@ int find_window_index(Window w) {
   return -1;
 }
 
-void kill_window() {
-  window_count -= 1;
-  Window w = windows[window_count];
+void kill_window(Window w) {
   XGrabServer(display);
   XSetCloseDownMode(display, DestroyAll);
   XKillClient(display, w);
@@ -165,6 +163,26 @@ static void hide_window(int idx) {
   XMoveWindow(display, window, screen_w * -2, 0);
 }
 
+static void unmanage_client(int unmanaged_client) {
+  Window unmanaged_client_window = windows[unmanaged_client];
+  window_count -= 1;
+
+  for (int i = unmanaged_client; i < window_count; i++)
+    windows[i] = windows[i + 1];
+
+  if (current_window > unmanaged_client)
+    current_window -= 1;
+
+  if (current_window == unmanaged_client) {
+    if (unmanaged_client == window_count)
+      current_window -= 1;
+    if (window_count == 0)
+      XSetInputFocus(display, root, RevertToPointerRoot, CurrentTime);
+    else
+      show_window(current_window);
+  }
+}
+
 /* Handlers*/
 
 static void keypress_handler(XEvent* event) {
@@ -177,9 +195,10 @@ static void keypress_handler(XEvent* event) {
     running = false;
   else if (keysym == XK_t && (ev->state == Mod4Mask || ev->state == Mod5Mask))
     spawn_term();
-  else if (keysym == XK_c && (ev->state == Mod4Mask || ev->state == Mod5Mask))
-    kill_window();
-  else if (keysym == XK_l && (ev->state == Mod4Mask || ev->state == Mod5Mask))
+  else if (keysym == XK_c && (ev->state == Mod4Mask || ev->state == Mod5Mask)) {
+    kill_window(windows[current_window]);
+    unmanage_client(current_window);
+  } else if (keysym == XK_l && (ev->state == Mod4Mask || ev->state == Mod5Mask))
     spawn_dmenu();
   else if (keysym == XK_j && (ev->state == Mod4Mask || ev->state == Mod5Mask) &&
            current_window < window_count - 1) {
@@ -206,24 +225,14 @@ static void unmapnotify_handler(XEvent* event) {
   XUnmapEvent* ev = &event->xunmap;
   Window w = ev->window;
 
-  fprintf(logfile, "UnmapN \t\t\t %ld \t\t event from %ld ", ev->window,
+  fprintf(logfile, "UnmapN \t\t\t %ld \t\t event from %ld\n", ev->window,
           ev->event);
 
-  int idx = find_window_index(w);
-  if (idx == -1)
-    fprintf(logfile, "\t Window not found\n");
-  else if (idx != window_count - 1)
-    fprintf(logfile, "\t Window wasn't top of stack\n");
-  else {
-    window_count -= 1;
-    fprintf(logfile, "\t Window count %d\n", window_count);
-  }
-
-  if (window_count == 0)
-    XSetInputFocus(display, root, RevertToPointerRoot, CurrentTime);
+  int client = find_window_index(w);
+  if (client == -1)
+    fprintf(logfile, "\t Client not found\n");
   else
-    XSetInputFocus(display, windows[window_count - 1], RevertToPointerRoot,
-                   CurrentTime);
+    unmanage_client(client);
 }
 
 static void maprequest_handler(XEvent* event) {
