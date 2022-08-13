@@ -1,10 +1,11 @@
-Shifting windows: Mod arrow left / right to shift
 Time / status in launchers
 Dynamic dispatch for handlers
 Sound volume controls
 Mouse button multitap emulation.
-Bug: Second window doesnt take keyboard control sometimes?
 
+DONE Make difference between a client and a window in the codes
+DONE Shifting windows: Mod arrow left / right to shift
+DONE Bug: Second window doesnt take keyboard control sometimes?
 DONE Mod+L for Launcher
 DONE Handle a second client launched from command
 DONE How to get a solid background for root?
