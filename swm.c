@@ -53,19 +53,11 @@ int xerror(Display* dpy, XErrorEvent* ee) {
 static void grabkeys() {
   XUngrabKey(display, AnyKey, AnyModifier, root);
 
-  // q = quit, c = close, t = terminal, l = launcher
-  XGrabKey(display, XKeysymToKeycode(display, XK_q), Mod4Mask, root, True,
-           GrabModeAsync, GrabModeAsync);
-  XGrabKey(display, XKeysymToKeycode(display, XK_c), Mod4Mask, root, True,
-           GrabModeAsync, GrabModeAsync);
-  XGrabKey(display, XKeysymToKeycode(display, XK_t), Mod4Mask, root, True,
-           GrabModeAsync, GrabModeAsync);
-  XGrabKey(display, XKeysymToKeycode(display, XK_l), Mod4Mask, root, True,
-           GrabModeAsync, GrabModeAsync);
-  XGrabKey(display, XKeysymToKeycode(display, XK_j), Mod4Mask, root, True,
-           GrabModeAsync, GrabModeAsync);
-  XGrabKey(display, XKeysymToKeycode(display, XK_k), Mod4Mask, root, True,
-           GrabModeAsync, GrabModeAsync);
+  int keys[6] = {XK_q, XK_c, XK_t, XK_l, XK_j, XK_k};
+
+  for (int i = 0; i < 6; i++)
+    XGrabKey(display, XKeysymToKeycode(display, keys[i]), Mod4Mask, root, True,
+             GrabModeAsync, GrabModeAsync);
 }
 
 static void setup() {
